@@ -1,0 +1,52 @@
+.App {
+  text-align: center;
+}
+
+#createTaskForm {
+  padding-top: 50px;
+  width: 50%;
+  margin: 0 auto;
+}
+
+nav {
+  color: rgb(71, 92, 99);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  min-width: 10vh;
+}
+
+p {
+  margin: 0px;
+}
+
+.taskClass {
+  display: flex;
+  color: white;
+  background: rgb(71, 92, 99);
+  align-items: center;
+  justify-content: space-around;
+  border: 0.5rem solid rgb(71, 92, 99);
+  border-radius: 12px;
+  padding: 10px;
+  margin: 10px;
+  text-decoration: none;
+}
+
+.taskTable {
+  width: 100%;
+}
+
+.taskCancelButton,
+.taskModifyButton {
+  color: white;
+}
+
+#createTaskButton {
+  background-color: rgb(71, 92, 99);
+}
+
+.inputClass{
+  display: flex;
+  justify-content: space-around;
+}
