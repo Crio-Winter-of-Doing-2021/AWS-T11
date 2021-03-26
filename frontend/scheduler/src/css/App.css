@@ -1,6 +1,3 @@
-.App {
-  text-align: center;
-}
 
 #createTaskForm {
   padding-top: 50px;
@@ -35,6 +32,7 @@ p {
 
 .taskTable {
   width: 100%;
+  padding: 50px;
 }
 
 .taskCancelButton,
@@ -49,4 +47,12 @@ p {
 .inputClass{
   display: flex;
   justify-content: space-around;
+}
+
+Table{
+  padding: 5px;
+}
+
+.AllTaskDiv{
+  text-align: center;
 }
