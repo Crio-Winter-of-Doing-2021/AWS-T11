@@ -1,12 +1,21 @@
 from flask import Flask,request
 from flask_cors import CORS
 from flask import jsonify
-import requests
 import task
 import json
 
+
 app = Flask(__name__)
+app.secret_key = b'\x88\xa6\xd6\x7f,\xbb}\xf9\x7f=\xa4\x08\x99\x94q\xc3'
 CORS(app)
+
+
+from user import routes
+
+
+#######################
+# Main functions 
+
 
 @app.route('/create_task',methods=['POST'])
 def create_task():
@@ -20,7 +29,6 @@ def create_task():
             return {'message':ret_task_id}
         else:
             data = request.json
-            print(data)
             url = data["taskurl"]
             delay = data["delay"]
             ret_task_id = task.CreateLamdaTask(url,delay)
@@ -31,21 +39,40 @@ def create_task():
 
 @app.route('/cancel_task',methods=['POST'])
 def cancel_task():
-    if(request.form):
-        data=request.form.to_dict()
-        task_id = data["taskid"]
-        ret = task.CancelTask(int(task_id))
+    if(request.method == 'POST'):
+        if(request.form):
+            data=request.form.to_dict()
+            task_id = data["taskid"]
+            ret = task.CancelTask(int(task_id))
+        else:
+            data = request.json
+            task_id = data["taskid"]
+            ret = task.CancelTask(int(task_id))
         return ret
+    else:
+        return {'message':'ERROR!'}
 
 
 @app.route('/modify_task',methods=['POST'])
 def modify_task():
-    if(request.form):
-        data=request.form.to_dict()
-        task_id = data["taskid"]
-        delay_val = data["delay"]
-        ret = task.reintializeTask(int(task_id),int(delay_val))
-        return ret
+    if request.method == 'POST':
+         if(request.form):   
+            data = request.form
+            url = data["task_id"]
+            delay = data["delay_val"]
+            ret_task_id = task.reintializeTask(url,delay)
+            return {'message':ret_task_id}
+         else:
+            data = request.json
+            print(data)
+            url = data["task_id"]
+            delay = data["delay_val"]
+            ret_task_id = task.reintializeTask(url,delay)
+            return {'message':ret_task_id}
+    else:
+        return {'message':'ERROR!'}
+
+    
 
 @app.route('/check_status',methods=['POST'])
 def checkStatus():
@@ -69,8 +96,6 @@ def get_all_task():
 def home():
   return 'hey!'
 
-if __name__ == '__main__':
-  app.run(debug=True,port=3000,threaded=True)
 
 
 

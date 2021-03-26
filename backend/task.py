@@ -8,6 +8,7 @@ from bson.json_util import dumps
 
 obj=pymongo.MongoClient()
 db=obj.scheduler
+
 taskDict = {}
 
 class Task:
@@ -44,33 +45,41 @@ class Task:
         try:
             await asyncio.sleep(self.seconds)
         except asyncio.CancelledError:
+            data = db.scheduler.find_one({"taskid":self.tid})
+            # if(data['status'] != 'COMPLETED' and data['status'] != ''):
+            #     db.scheduler.update_one({"taskid":self.tid},{"$set":{"status":"FAILED"}})
             print(f'{self.tid} task is cancellation confirmed!')
             raise
 
         data = db.scheduler.find_one({"taskid":self.tid})
         print(f'Status check for {self.tid} !')
         if data["status"] == "RUNNING":
-            result = requests.get(self.url)
-            if(result.status_code == 200):
-                db.scheduler.update_one({"taskid":self.tid},{"$set":{"status":"COMPLETED"}})
-                print(result.json())
-                db.scheduler.update_one({"taskid":self.tid},{"$set":{"ret_message":result.json()}})
-                print(f'Task {self.tid} COMPLETED at : {datetime.now().time()}')
-            else:
+            try:
+                result = requests.get(self.url)
+                if(result.status_code == 200):
+                    db.scheduler.update_one({"taskid":self.tid},{"$set":{"status":"COMPLETED"}})
+                    print(result.json())
+                    db.scheduler.update_one({"taskid":self.tid},{"$set":{"ret_message":result.json()}})
+                    print(f'Task {self.tid} COMPLETED at : {datetime.now().time()}')
+                else:
+                    db.scheduler.update_one({"taskid":self.tid},{"$set":{"status":"FAILED"}})
+                    db.scheduler.update_one({"taskid":self.tid},{"$set":{"ret_message":result.json()}})
+                    print(f'Task {self.tid} FAILED at : {datetime.now().time()}') 
+            except Exception as e:
                 db.scheduler.update_one({"taskid":self.tid},{"$set":{"status":"FAILED"}})
-                db.scheduler.update_one({"taskid":self.tid},{"$set":{"ret_message":result.json()}})
-                print(f'Task {self.tid} FAILED at : {datetime.now().time()}') 
+                print(e)
     
     
     async def intitialize(self):
         print(f'Task {self.tid} initialize() called at : {datetime.now().time()}')
         test = asyncio.create_task(self.scheduleTask())
         print(type(test))
+        # db.taskRef.insert_one(data)
         taskDict[self.tid] = [test,self]
         try:
             await test
         except asyncio.CancelledError:
-            print("In initialize task : ")
+            print("In initialize task : ")  
 
     def getStatus(self):
         data = db.scheduler.find_one({"taskid":self.tid})
@@ -101,10 +110,9 @@ def CancelTask(taskIDcancel):
         elif(task['status']=='FAILED'):
             return f'Task {task["taskid"]} already failed!'
         else:
-            # print(dir(taskDict[task['taskid']]))
-            taskDict[task['taskid']].cancel()
-            print('CHECK: ',taskDict[task['taskid']].cancelled())
-            db.scheduler.update_one({'taskid':self.tid},{"$set":{'status':'CANCELLED'}})
+            taskDict[task['taskid']][0].cancel()
+            print('CHECK: ',taskDict[task['taskid']][0].cancelled())
+            db.scheduler.update_one({'taskid':taskIDcancel},{"$set":{'status':'CANCELLED'}})
             return f'Task {task["taskid"]} is successfully canceled!'
     except Exception as e:
         print(e)
@@ -147,20 +155,39 @@ def getAllTask(statusOf=None):
 
 
 def reintializeTask(taskID,delay_val):
-    # print(taskDict)
-    ret_taskObject = taskDict[taskID][1]
+    print(f'Task {taskID} reinitialize() called at : {datetime.now().time()}')
+    taskObect = taskDict[taskID][1]
     task_Ref = taskDict[taskID][0]
+
     task_Ref.cancel()
-    print(type(ret_taskObject))
-    ret_taskObject.seconds = delay_val
-    db.scheduler.update_one({"taskid":taskID},{"$set":{"time_delay":delay_val}})
-    asyncio.run(ret_taskObject.intitialize())
-    return 'check'
+
+    print(type(taskObect))
+
+    taskObect.seconds = delay_val
+
+    db.scheduler.update_one({"taskid":taskID},{"$set":{
+        "time_delay":delay_val,
+        "last_modified":datetime.now()
+        }})
+
+    asyncio.run(taskObect.intitialize())
+
+    return 'Modified!'
 
     
+def CheckStatus(taskid):
+    task = db.scheduler.find_one({'taskid':int(taskid)})
+    if task == None:
+        return "No such task!"
+    else:
+        return task["status"]
 
 # def run(corutine):
 #     try:
 #         corutine.send(None)
 #     except StopIteration as e:
 #         return e.value
+
+
+#  Orchestator functions
+

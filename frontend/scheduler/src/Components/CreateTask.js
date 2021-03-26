@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import "../css/App.css";
 
 class CreateTask extends Component {
   constructor(props) {
@@ -29,7 +30,7 @@ class CreateTask extends Component {
       .catch((err) => console.log(err));
 
       this.setState({ taskurl:"" , delay:"" });
-    console.log("This data is received : " + data["message"]);
+    // console.log("This data is received : " + data["message"]);
   };
 
   handleChange = (e) => {

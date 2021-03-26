@@ -1,0 +1,25 @@
+.formBg{
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(228, 237, 245,.5);
+    text-align:center;
+}
+
+.form-container{
+    max-width: auto;
+    margin: auto;
+    padding: 20px;
+    /* background-color: rgba(228, 237, 245,.8); */
+    text-align: left;
+    /* margin-top: 50px; */
+}
+
+.loginForm{
+    text-align: left ;
+}
+
+.CreateTask h1{
+    text-align: center;
+}
