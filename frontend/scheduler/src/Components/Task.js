@@ -9,18 +9,24 @@ function Task({ data, functionChange }) {
     textDecoration: "none",
   };
 
+
   const cancelHandler = () => {
     const send_data = {
       taskid: data.taskid,
     };
+
+    const local_token = JSON.parse(localStorage.getItem("login"));
+
+    var myHeader = new Headers();
+    myHeader.append("Authorization", "Bearer " + local_token["token"]);
+    myHeader.append("Content-Type", "application/json");
+
     fetch("http://localhost:3000/cancel_task", {
       method: "POST",
       mode: "cors",
       credentials: "same-origin",
       body: JSON.stringify(send_data),
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: myHeader,
     })
       .then((res) => res.json())
       .then((res) => {
@@ -38,12 +44,13 @@ function Task({ data, functionChange }) {
       <td>{data.taskid}</td>
       <td>{data.status}</td>
       <td>{data.time_delay}</td>
-      <td>{data.ret_message}</td>
+      {/* <td></td> */}
+      <td>{data.last_modified}</td>
       <td>
         <Link
           style={navStyle}
           to={{
-            pathname: "/modify_task",
+            pathname: "/Dashboard/modify_task",
             state: {
               taskid: data.taskid,
               new_delay: 0,

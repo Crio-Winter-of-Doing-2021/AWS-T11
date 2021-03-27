@@ -1,5 +1,5 @@
-import React, { Component, useState } from "react";
-import { Route, Redirect, Link } from "react-router-dom";
+import React, { Component } from "react";
+import {Redirect, Link } from "react-router-dom";
 import auth from "./auth";
 import "../css/login.css";
 
@@ -7,8 +7,10 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      name: "",
       email: "",
       password: "",
+      userId: 0,
       redirectToDash: false,
     };
   }
@@ -17,23 +19,33 @@ class Login extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
+  componentDidMount() {
+    console.log("In Login mount !");
+    try {
+      let local_storage = JSON.parse(localStorage.getItem("login"));
+      if(local_storage["login"]){
+        var _name = local_storage["userName"];
+        var _id = local_storage["UserId"];
+        auth.login(_name,_id);
+        this.setState({redirectToDash:true});
+      }
+      else console.log("failed to get access to localStorage data");
+    } catch (err) {
+      console.log("Can not login without creditinals (LocalStorage data missing!)");
+      this.setState({ redirectToDash: false });
+    }
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
 
     try {
-      const local_token = JSON.parse(localStorage.getItem("login"));
-      console.log(local_token["token"]);
-
-      var myHeader = new Headers();
-      myHeader.append("Authorization", "Bearer " + local_token["token"]);
-      myHeader.append("Content-Type", "application/json");
-
       fetch("http://localhost:3000/user/login", {
         method: "POST",
         mode: "cors",
         credentials: "same-origin",
         body: JSON.stringify(this.state),
-        headers: myHeader,
+        headers: { "Content-Type": "application/json" },
       })
         .then(function (response) {
           if (!response.ok) {
@@ -46,11 +58,21 @@ class Login extends Component {
           return response.json();
         })
         .then((res) => {
-          this.setState({ redirectToDash: true });
-          auth.login(() => {
-            this.props.history.push("/Dashboard");
+          localStorage.setItem(
+            "login",
+            JSON.stringify({
+              login: true,
+              token: res.token,
+              userName: res.userName,
+              userId: res.userId
+            })
+          );
+          auth.login(res["userName"], res["userId"]);
+          this.setState({
+            redirectToDash: true,
+            userId: res["userId"],
+            name: res["userName"],
           });
-          console.log(res);
         })
         .catch((err) => console.log(err, " - fetch error!"));
     } catch (err) {
@@ -60,96 +82,70 @@ class Login extends Component {
 
   render() {
     var renderComponent;
-    renderComponent = (
-      <div className="CreateTask">
-        <form
-          action=""
-          id="createTaskForm"
-          className="forms"
-          onSubmit={this.handleSubmit}
-        >
-          <h1>Login</h1>
-          <label>
-            Email
-            <input
-              type="text"
-              className="u-full-width"
-              name="email"
-              value={this.state.email}
-              onChange={this.handleChange}
-            />
-          </label>
+    if (!this.state.redirectToDash)
+      renderComponent = (
+        <div className="CreateTask">
+          <form
+            action=""
+            id="createTaskForm"
+            className="forms"
+            onSubmit={this.handleSubmit}
+          >
+            <h1>Login</h1>
+            <label>
+              Email
+              <input
+                type="text"
+                className="u-full-width"
+                name="email"
+                value={this.state.email}
+                onChange={this.handleChange}
+              />
+            </label>
 
-          <label>
-            Password
-            <input
-              type="text"
-              className="u-full-width"
-              name="password"
-              type="password"
-              value={this.state.password}
-              onChange={this.handleChange}
-            />
-          </label>
+            <label>
+              Password
+              <input
+                className="u-full-width"
+                name="password"
+                type="password"
+                value={this.state.password}
+                onChange={this.handleChange}
+              />
+            </label>
 
-          <button className="button-primary" id="createTaskButton">
-            LOGIN
-          </button>
-          <dir>
-            <Link
-              style={{
-                color: "rgb(71, 92, 99)",
-                textDecoration: "none",
-              }}
-              to="/signup"
-            >
-              Signup
-            </Link>
-          </dir>
-        </form>
-      </div>
-    );
-
+            <button className="button-primary" id="createTaskButton">
+              LOGIN
+            </button>
+            <dir>
+              <Link
+                style={{
+                  color: "rgb(71, 92, 99)",
+                  textDecoration: "none",
+                }}
+                to="/signup"
+              >
+                Signup
+              </Link>
+            </dir>
+          </form>
+        </div>
+      );
+    else
+      renderComponent = (
+        <Redirect
+          to={{
+            pathname: "/Dashboard",
+            state: {
+              from: this.props.location
+            },
+          }}
+        />
+      );
     return <div>{renderComponent}</div>;
   }
 }
 
-/*
-<div className={"formBg"}>
-          <div className="form-container">
-              <h1>Login</h1>
-        <form  onSubmit={this.handleSubmit}>
-          <label>Email:</label> 
-          <input
-            type="text"
-            name="email"
-            className="loginForm"
-            value={this.state.email}
-            onChange={this.handleChange}
-          />
-          
-          <label>Password:</label>
-          <input
-            type="password"
-            name="password"
-            value={this.state.password}
-            onChange={this.handleChange}
-          />
-          
-          <div>
-            <button
-            // onClick={() => {
-            //   auth.login(() => {
-            //     this.props.history.push("/Dashboard");
-            //   });
-            // }}
-            >
-              Login
-            </button>
-          </div>
-        </form>
-        </div>
-      </div>
-*/
+
 
 export default Login;

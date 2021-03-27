@@ -35,7 +35,7 @@ class User:
 
         db.users.insert_one(user)
 
-        return jsonify({"userId":user["_id"],"token":token.decode('UTF-8')}) , 200
+        return jsonify({"userId":user["_id"],"token":token.decode('UTF-8'),"userName":user["name"]}) , 200
     
 
 
@@ -45,7 +45,7 @@ class User:
 
         if user:
             token = jwt.encode({'name':user['name'],'email':user['email'],'exp': datetime.utcnow() + timedelta(minutes=30)},app.secret_key)
-            return jsonify({ "userId":user["_id"],"token":token.decode('UTF-8') }) , 200
+            return jsonify({ "userId":user["_id"],"token":token.decode('UTF-8'),"userName":user["name"] }) , 200
         else:
             return jsonify({"message":"no such user"}) , 404
             

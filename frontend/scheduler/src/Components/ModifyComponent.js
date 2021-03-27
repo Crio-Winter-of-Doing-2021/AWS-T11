@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import "./component-css/functions.css";
 
-import { Link } from "react-router-dom";
-
 class ModifyComponent extends Component {
   constructor(props) {
     super(props);
@@ -18,15 +16,20 @@ class ModifyComponent extends Component {
       task_id: this.state.taskid,
       delay_val: Number(this.state.new_delay),
     };
+
+    const local_token = JSON.parse(localStorage.getItem("login"));
+
+    var myHeader = new Headers();
+    myHeader.append("Authorization", "Bearer " + local_token["token"]);
+    myHeader.append("Content-Type", "application/json");
+
     var data = [];
     fetch("http://localhost:3000/modify_task", {
       method: "POST",
       mode: "cors",
       credentials: "same-origin",
       body: JSON.stringify(send_data),
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: myHeader,
     })
       .then((res) => res.json())
       .then((res) => {
@@ -47,10 +50,10 @@ class ModifyComponent extends Component {
 
   render() {
     var { taskid, new_delay } = this.state;
-    const navStyle = {
-      color: "rgb(71, 92, 99)",
-      textDecoration: "none",
-    };
+    // const navStyle = {
+    //   color: "rgb(71, 92, 99)",
+    //   textDecoration: "none",
+    // };
     return (
       <form id="createTaskForm" className="forms" onSubmit={this.handleSubmit}>
         <label>

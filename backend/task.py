@@ -45,7 +45,7 @@ class Task:
         try:
             await asyncio.sleep(self.seconds)
         except asyncio.CancelledError:
-            data = db.scheduler.find_one({"taskid":self.tid})
+            # data = db.scheduler.find_one({"taskid":self.tid})
             # if(data['status'] != 'COMPLETED' and data['status'] != ''):
             #     db.scheduler.update_one({"taskid":self.tid},{"$set":{"status":"FAILED"}})
             print(f'{self.tid} task is cancellation confirmed!')

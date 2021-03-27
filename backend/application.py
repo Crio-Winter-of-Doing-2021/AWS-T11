@@ -1,23 +1,24 @@
-from flask import Flask,request
+from flask import Flask,request , jsonify
 from flask_cors import CORS
 from flask import jsonify
 import task
 import json
+from functools import wraps
+import jwt
 
 
 app = Flask(__name__)
 app.secret_key = b'\x88\xa6\xd6\x7f,\xbb}\xf9\x7f=\xa4\x08\x99\x94q\xc3'
 CORS(app)
 
-
 from user import routes
-
+from app import login_required
 
 #######################
 # Main functions 
 
-
 @app.route('/create_task',methods=['POST'])
+@login_required
 def create_task():
     # return {'message':'test'}
     if request.method == 'POST':
@@ -32,12 +33,13 @@ def create_task():
             url = data["taskurl"]
             delay = data["delay"]
             ret_task_id = task.CreateLamdaTask(url,delay)
-            return {'message':ret_task_id}
+            return {'taskid':ret_task_id}
     else:
         return {'message':'ERROR!'}
 
 
 @app.route('/cancel_task',methods=['POST'])
+@login_required
 def cancel_task():
     if(request.method == 'POST'):
         if(request.form):
@@ -54,6 +56,7 @@ def cancel_task():
 
 
 @app.route('/modify_task',methods=['POST'])
+@login_required
 def modify_task():
     if request.method == 'POST':
          if(request.form):   
@@ -72,9 +75,11 @@ def modify_task():
     else:
         return {'message':'ERROR!'}
 
-    
+def ret_data(data):
+    return jsonify({'message':data})
 
 @app.route('/check_status',methods=['POST'])
+@login_required
 def checkStatus():
     if(request.form):
         data = request.form.to_dict()
@@ -82,12 +87,14 @@ def checkStatus():
         return ret
 
 @app.route('/getAllTask/<statusOf>',methods=['GET'])
+@login_required
 def get_all_task_by_status(statusOf):
     ret = task.getAllTask(statusOf)
     return ret
 
 
 @app.route('/getAllTask',methods=['GET'])
+@login_required
 def get_all_task():
     ret = task.getAllTask()
     return jsonify(ret)

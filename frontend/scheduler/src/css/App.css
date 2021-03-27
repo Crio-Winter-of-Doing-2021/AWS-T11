@@ -5,6 +5,16 @@
   margin: 0 auto;
 }
 
+#test{
+  padding-top: 50px;
+  width: 100%;
+  height: 50vh;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 nav {
   color: rgb(71, 92, 99);
   display: flex;

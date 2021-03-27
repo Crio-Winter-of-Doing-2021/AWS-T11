@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Route, Redirect, Link } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 import auth from "./auth";
 
 class Signup extends Component {
@@ -9,8 +9,21 @@ class Signup extends Component {
       name: "",
       email: "",
       password: "",
+      userName:"",
+      userId:"",
       redirectToDash: false,
     };
+  }
+
+  componentDidMount() {
+    try{
+        let local_token = JSON.parse(localStorage.getItem("login"));
+        console.log(local_token," - from APP.js");
+        auth.login( () => {} );
+        if (local_token["login"]) this.setState({redirectToDash:true});
+        else console.log("failed test")
+      }
+      catch(err) { console.log("Can not signup without credintials");  this.setState({ redirectToDash: false }); }
   }
 
   HandleSignup = (e) => {
@@ -22,7 +35,7 @@ class Signup extends Component {
       body: JSON.stringify(this.state),
       headers: {
         "Content-Type": "application/json",
-      },
+      }
     })
       .then(function (response) {
         if (!response.ok) {
@@ -41,14 +54,15 @@ class Signup extends Component {
             token: res.token,
           })
         );
+        // console.log(res);
+        auth.login( res["userName"] ,res["userId"] );
+        this.setState({userName:this.state.name,userId:res["userId"],redirectToDash:true});
+        console.log(this.state);
         console.log(res);
-        auth.login( () => {
-          this.props.history.push("/Dashboard");
-        } )
         // this.setState({ redirectToDash: true });
       })
       .catch((err) => console.log(err));
-    this.setState({ name: "", email: "", password: "" });
+
   };
 
   handleChange = (e) => {
@@ -57,7 +71,7 @@ class Signup extends Component {
 
   render() {
     var renderComponent;
-    if (this.state.redirectToDash == false)
+    if (!this.state.redirectToDash)
       renderComponent = (
         <div className="CreateTask">
           <form
@@ -91,7 +105,6 @@ class Signup extends Component {
             <label>
               Password
               <input
-                type="text"
                 className="u-full-width"
                 name="password"
                 type="password"
@@ -121,9 +134,11 @@ class Signup extends Component {
       renderComponent = (
         <Redirect
           to={{
-            pathname: "/",
+            pathname: "/Dashboard",
             state: {
               from: this.props.location,
+              userName: this.state.userName,
+              userId:this.state.userId
             },
           }}
         />
