@@ -23,3 +23,19 @@
 .CreateTask h1{
     text-align: center;
 }
+
+.allTaskOptions{
+    display: flex;
+    justify-content: space-around;
+    margin: auto;
+    width: 50%;
+    margin-top: 25px;
+    /* background-color: red; */
+}
+
+#InfoButton{
+    font-family: 'Pacifico', cursive;
+    text-transform: lowercase; 
+    font-weight: normal;
+    font-size: 20px;
+}

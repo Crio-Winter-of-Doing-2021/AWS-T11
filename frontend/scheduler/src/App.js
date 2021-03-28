@@ -6,10 +6,13 @@ import ModifyComponent from "./Components/ModifyComponent";
 import {
   BrowserRouter as Router,
   Switch,
+  Redirect,
+  Route
 } from "react-router-dom";
 import React, { Component } from "react";
 import { ProtectedRoute } from "./user/protected.route";
 import auth from "./user/auth";
+import UserData from './user/UserData';
 
 class App extends Component {
 
@@ -44,10 +47,24 @@ class App extends Component {
       <Router>
         <div className="App">
           <Nav {...this.props} />
-          <div id="test">
+          {/* <div id="test">
             <h1>Welcome {this.state.userName}</h1>
-          </div>
+          </div> */}
           <Switch>
+          <Route
+                exact
+                path="/Dashboard"
+                render={() => {
+                    return (
+                      <Redirect to="/Dashboard/home" {...this.props} /> 
+                    )
+                }}
+              />
+            <ProtectedRoute path="/Dashboard/home" {...this.props} component={UserData} />
+          <ProtectedRoute
+              path="/Dashboard/userdata"
+              component={UserData}
+            />
             <ProtectedRoute
               path="/Dashboard/createtask"
               component={CreateTask}

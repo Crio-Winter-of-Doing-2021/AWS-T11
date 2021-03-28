@@ -12,7 +12,7 @@ class CreateTask extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    console.log(this.state);
+    // console.log(this.state);
     var data = [];
 
     const local_token = JSON.parse(localStorage.getItem("login"));
@@ -20,11 +20,17 @@ class CreateTask extends Component {
     myHeader.append("Authorization", "Bearer " + local_token["token"]);
     myHeader.append("Content-Type", "application/json");
 
+    var send_data = {
+      taskurl: this.state.taskurl,
+      delay: this.state.delay,
+      userId: local_token["userId"]
+    }
+
     fetch("http://localhost:3000/create_task", {
       method: "POST",
       mode: "cors",
       credentials: "same-origin",
-      body: JSON.stringify(this.state),
+      body: JSON.stringify(send_data),
       headers: myHeader,
     })
       .then((res) => res.json())

@@ -28,7 +28,16 @@ def login():
     # return {'message':'you there'} , 200
     
 
-@app.route('/user/test',methods=['GET','POST'])
+@app.route('/user/details',methods=['POST'])
 @login_required
-def test():
-    return {'message':'Logged In token is good'}
+def getUserDetails():
+    data = request.get_json()
+    print(data)
+    try:
+        data = request.get_json()
+        _id = data["userId"]
+        return User().returnUserData(_id)
+    except Exception as e:
+        print(e)
+        return jsonify({'message':'something is wrong with /user/detials'}) , 500
+

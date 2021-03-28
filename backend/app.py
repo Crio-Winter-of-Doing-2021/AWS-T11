@@ -12,15 +12,15 @@ def login_required(f):
     def decorated(*args,**kwargs):
         try:
             token = request.headers.get("Authorization").split()[1]
-            print(token)
+            # print(token)
         except:
-            return jsonify({"message":"Token missing"})
+            return jsonify({"message":"Token missing"}) , 404
         
         try:
-            print(app.secret_key)
+            # print(app.secret_key)
             data = jwt.decode(token,app.secret_key)
         except:
-            return jsonify({"message":"Token not valid"})
+            return jsonify({"message":"Token not valid"}) , 404
 
 
         return f(*args,**kwargs)

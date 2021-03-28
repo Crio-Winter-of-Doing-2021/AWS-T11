@@ -27,15 +27,16 @@ def create_task():
             url = data["url"]
             delay = data["delay"]
             ret_task_id = task.CreateLamdaTask(url,delay)
-            return {'message':ret_task_id}
+            return {'message':ret_task_id} , 200
         else:
             data = request.json
             url = data["taskurl"]
             delay = data["delay"]
-            ret_task_id = task.CreateLamdaTask(url,delay)
-            return {'taskid':ret_task_id}
+            userId = data["userId"]
+            ret_task_id = task.CreateLamdaTask(url,delay,userId)
+            return {'taskid':ret_task_id} , 200
     else:
-        return {'message':'ERROR!'}
+        return {'message':'ERROR!'} , 400
 
 
 @app.route('/cancel_task',methods=['POST'])
@@ -50,9 +51,9 @@ def cancel_task():
             data = request.json
             task_id = data["taskid"]
             ret = task.CancelTask(int(task_id))
-        return ret
+        return ret , 200
     else:
-        return {'message':'ERROR!'}
+        return {'message':'ERROR!'} , 404
 
 
 @app.route('/modify_task',methods=['POST'])
@@ -64,16 +65,16 @@ def modify_task():
             url = data["task_id"]
             delay = data["delay_val"]
             ret_task_id = task.reintializeTask(url,delay)
-            return {'message':ret_task_id}
+            return {'message':ret_task_id} , 200
          else:
             data = request.json
             print(data)
             url = data["task_id"]
             delay = data["delay_val"]
             ret_task_id = task.reintializeTask(url,delay)
-            return {'message':ret_task_id}
+            return {'message':ret_task_id} , 200
     else:
-        return {'message':'ERROR!'}
+        return {'message':'ERROR!'} , 404
 
 def ret_data(data):
     return jsonify({'message':data})
@@ -84,7 +85,7 @@ def checkStatus():
     if(request.form):
         data = request.form.to_dict()
         ret = task.getTaskStatus(data['taskid'])
-        return ret
+        return 
 
 @app.route('/getAllTask/<statusOf>',methods=['GET'])
 @login_required
@@ -101,7 +102,7 @@ def get_all_task():
 
 @app.route('/')
 def home():
-  return 'hey!'
+  return 'hey!' , 200
 
 
 

@@ -11,9 +11,9 @@ function Nav(props) {
 
   return (
     <nav>
-      {/* <Link style={navStyle} to="/"> */}
+      <Link style={navStyle} to="/Dashboard">
         <h1>Task Scheduler</h1>
-      {/* </Link> */}
+      </Link>
       <Link style={navStyle} to="/Dashboard/createtask">
         <h3>Create Task</h3>
       </Link>

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {Redirect, Link } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 import auth from "./auth";
 import "../css/login.css";
 
@@ -23,22 +23,22 @@ class Login extends Component {
     console.log("In Login mount !");
     try {
       let local_storage = JSON.parse(localStorage.getItem("login"));
-      if(local_storage["login"]){
+      if (local_storage["login"]) {
         var _name = local_storage["userName"];
         var _id = local_storage["UserId"];
-        auth.login(_name,_id);
-        this.setState({redirectToDash:true});
-      }
-      else console.log("failed to get access to localStorage data");
+        auth.login(_name, _id);
+        this.setState({ redirectToDash: true });
+      } else console.log("failed to get access to localStorage data");
     } catch (err) {
-      console.log("Can not login without creditinals (LocalStorage data missing!)");
+      console.log(
+        "Can not login without creditinals!"
+      );
       this.setState({ redirectToDash: false });
     }
   }
 
   handleSubmit = (e) => {
     e.preventDefault();
-
     try {
       fetch("http://localhost:3000/user/login", {
         method: "POST",
@@ -64,9 +64,11 @@ class Login extends Component {
               login: true,
               token: res.token,
               userName: res.userName,
-              userId: res.userId
+              userId: res.userId,
+              Admin: false,
             })
           );
+          console.log("Login data ! ");
           auth.login(res["userName"], res["userId"]);
           this.setState({
             redirectToDash: true,
@@ -137,7 +139,7 @@ class Login extends Component {
           to={{
             pathname: "/Dashboard",
             state: {
-              from: this.props.location
+              from: this.props.location,
             },
           }}
         />
@@ -145,7 +147,5 @@ class Login extends Component {
     return <div>{renderComponent}</div>;
   }
 }
-
-
 
 export default Login;

@@ -9,60 +9,70 @@ class Signup extends Component {
       name: "",
       email: "",
       password: "",
-      userName:"",
-      userId:"",
+      userName: "",
+      userId: "",
       redirectToDash: false,
     };
   }
 
   componentDidMount() {
-    try{
-        let local_token = JSON.parse(localStorage.getItem("login"));
-        console.log(local_token," - from APP.js");
-        auth.login( () => {} );
-        if (local_token["login"]) this.setState({redirectToDash:true});
-        else console.log("failed test")
-      }
-      catch(err) { console.log("Can not signup without credintials");  this.setState({ redirectToDash: false }); }
+    try {
+      let local_storage = JSON.parse(localStorage.getItem("login"));
+      if (local_storage["login"]) {
+        var _name = local_storage["userName"];
+        var _id = local_storage["UserId"];
+        auth.login(_name, _id);
+        this.setState({ redirectToDash: true });
+      } else console.log("failed to get access to localStorage data");
+    } catch (err) {
+      console.log("Can not signup without credintials");
+      this.setState({ redirectToDash: false });
+    }
   }
 
   HandleSignup = (e) => {
     e.preventDefault();
-    fetch("http://localhost:3000/user/signup", {
-      method: "POST",
-      mode: "cors",
-      credentials: "same-origin",
-      body: JSON.stringify(this.state),
-      headers: {
-        "Content-Type": "application/json",
-      }
-    })
-      .then(function (response) {
-        if (!response.ok) {
-          if (response.status === 409) alert("Email already used!");
-          if (response.status === 422) alert("Invalid Email !");
-          window.location.reload();
-          throw new Error("HTTP status " + response.status);
-        }
-        return response.json();
+    try {
+      fetch("http://localhost:3000/user/signup", {
+        method: "POST",
+        mode: "cors",
+        credentials: "same-origin",
+        body: JSON.stringify(this.state),
+        headers: {
+          "Content-Type": "application/json",
+        },
       })
-      .then((res) => {
-        localStorage.setItem(
-          "login",
-          JSON.stringify({
-            login: true,
-            token: res.token,
-          })
-        );
-        // console.log(res);
-        auth.login( res["userName"] ,res["userId"] );
-        this.setState({userName:this.state.name,userId:res["userId"],redirectToDash:true});
-        console.log(this.state);
-        console.log(res);
-        // this.setState({ redirectToDash: true });
-      })
-      .catch((err) => console.log(err));
-
+        .then(function (response) {
+          if (!response.ok) {
+            if (response.status === 409) alert("Email already used!");
+            if (response.status === 422) alert("Invalid Email !");
+            window.location.reload();
+            throw new Error("HTTP status " + response.status);
+          }
+          return response.json();
+        })
+        .then((res) => {
+          localStorage.setItem(
+            "login",
+            JSON.stringify({
+              login: true,
+              token: res.token,
+              userName: res.userName,
+              userId: res.userId,
+            })
+          );
+          auth.login(res["userName"], res["userId"]);
+          this.setState({
+            userName: this.state.name,
+            userId: res["userId"],
+            redirectToDash: true,
+          });
+        })
+        .catch((err) => console.log(err));
+    } catch (err) {
+      console.log("ERROR WHILE CREATING ACCOUNT! - ");
+      console.log(err);
+    }
   };
 
   handleChange = (e) => {
@@ -138,7 +148,7 @@ class Signup extends Component {
             state: {
               from: this.props.location,
               userName: this.state.userName,
-              userId:this.state.userId
+              userId: this.state.userId,
             },
           }}
         />
