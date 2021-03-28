@@ -13,11 +13,12 @@ taskDict = {}
 
 class Task:
 
-    def __init__(self,url,seconds,idReq):
+    def __init__(self,url,seconds,idReq,userId):
         self.url = url
         self.seconds = seconds
         self.tid = idReq
         self.test = None
+        self.userId = userId
         self.addInDb()
         
     def addInDb(self):
@@ -32,33 +33,32 @@ class Task:
             "ret_message":"",
             "time_created":d,
             "last_modified":d,
-            "user_id":"",
-            "status_code":""
+            "user_id":self.userId,
+            "status_code":"",
+            "url_params":[]
         }
         db.scheduler.insert_one(data) 
         print(f'Task {self.tid} ADDED at : {datetime.now().time()}')
 
     async def scheduleTask(self):
 
-        db.scheduler.update_one({'taskid':self.tid},{"$set":{'status':'RUNNING'}})
+        db.scheduler.update_one({'taskid':self.tid},{"$set":{'status':'SCHEDULED'}})
         
         try:
             await asyncio.sleep(self.seconds)
         except asyncio.CancelledError:
-            data = db.scheduler.find_one({"taskid":self.tid})
-            # if(data['status'] != 'COMPLETED' and data['status'] != ''):
-            #     db.scheduler.update_one({"taskid":self.tid},{"$set":{"status":"FAILED"}})
             print(f'{self.tid} task is cancellation confirmed!')
             raise
 
         data = db.scheduler.find_one({"taskid":self.tid})
         print(f'Status check for {self.tid} !')
-        if data["status"] == "RUNNING":
+        if data["status"] == "SCHEDULED":
             try:
                 result = requests.get(self.url)
+                db.scheduler.update_one({'taskid':self.tid},{"$set":{'status':'RUNNING'}})
                 if(result.status_code == 200):
                     db.scheduler.update_one({"taskid":self.tid},{"$set":{"status":"COMPLETED"}})
-                    print(result.json())
+                    # print(result.json())
                     db.scheduler.update_one({"taskid":self.tid},{"$set":{"ret_message":result.json()}})
                     print(f'Task {self.tid} COMPLETED at : {datetime.now().time()}')
                 else:
@@ -88,11 +88,11 @@ class Task:
 
 # Functions part
 
-def CreateLamdaTask(url,delay=0):
+def CreateLamdaTask(url,delay=0,userId=0,params=None):
     try:
         no_tasks = db.scheduler.find().count()
         new_id = no_tasks + 1
-        t = Task(url,int(delay),new_id)
+        t = Task(url,int(delay),new_id,userId)
         asyncio.run(t.intitialize())
         return json.dumps(new_id)
     except Exception as e:
@@ -153,6 +153,7 @@ def getAllTask(statusOf=None):
         else:
             return 'NO SUCH STATUS'
 
+  
 
 def reintializeTask(taskID,delay_val):
     print(f'Task {taskID} reinitialize() called at : {datetime.now().time()}')
@@ -173,6 +174,8 @@ def reintializeTask(taskID,delay_val):
     asyncio.run(taskObect.intitialize())
 
     return 'Modified!'
+
+
 
     
 def CheckStatus(taskid):

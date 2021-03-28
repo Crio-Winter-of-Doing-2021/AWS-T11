@@ -7,13 +7,13 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { ProtectedRoute } from "./user/protected.route";
 import Signup from './user/Signup';
 
-function Index() {
+function Index(props) {
   return (
     <div className="">
       <Switch>
         <Route exact path="/" component={Login} />
         <Route exact path="/signup" component={Signup}/>
-        <ProtectedRoute exact path="/Dashboard" component={App} />
+        <ProtectedRoute exact path="/Dashboard" {...props} component={App} />
         <Route path="*" component={() => "404 NOT FOUND"} />
       </Switch>
     </div>

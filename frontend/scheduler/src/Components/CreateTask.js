@@ -12,20 +12,31 @@ class CreateTask extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    console.log(this.state);
+    // console.log(this.state);
     var data = [];
+
+    const local_token = JSON.parse(localStorage.getItem("login"));
+    var myHeader = new Headers();
+    myHeader.append("Authorization", "Bearer " + local_token["token"]);
+    myHeader.append("Content-Type", "application/json");
+
+    var send_data = {
+      taskurl: this.state.taskurl,
+      delay: this.state.delay,
+      userId: local_token["userId"]
+    }
+
     fetch("http://localhost:3000/create_task", {
       method: "POST",
       mode: "cors",
       credentials: "same-origin",
-      body: JSON.stringify(this.state),
-      headers: {
-        "Content-Type": "application/json",
-      },
+      body: JSON.stringify(send_data),
+      headers: myHeader,
     })
       .then((res) => res.json())
       .then((res) => {
         data = res;
+        console.log(data,' - when creating new task');
       })
       .catch((err) => console.log(err));
 
@@ -42,7 +53,7 @@ class CreateTask extends Component {
   render() {
     const { taskurl, delay } = this.state;
     return (
-      <div className="CreateTask">
+      <div className="container">
         <form
           action=""
           id="createTaskForm"
@@ -51,6 +62,9 @@ class CreateTask extends Component {
         >
             <label >
               Task URL:
+              <div className="row">
+                
+              </div>
               <input
                 type="text"
                 className="u-full-width"
@@ -58,11 +72,12 @@ class CreateTask extends Component {
                 value={taskurl}
                 onChange={this.handleChange}
               />
+              <div><button>Add Parameters</button></div>
             </label>
 
           
           <label>
-            Delay:
+            Delay(Seconds):
             <input
               type="text"
               value={delay}

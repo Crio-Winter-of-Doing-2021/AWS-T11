@@ -20,6 +20,8 @@ class User:
             "name": request.get_json()['name'],
             "email": request.get_json()['email'],
             "password": request.get_json()['password'],
+            "role": "user",
+            "account_created":datetime.now()
         }
 
         token = jwt.encode({'name':user["name"],'email':user["email"],'exp': datetime.utcnow() + timedelta(minutes=30)},app.secret_key)
@@ -35,7 +37,7 @@ class User:
 
         db.users.insert_one(user)
 
-        return jsonify({"userId":user["_id"],"token":token.decode('UTF-8')}) , 200
+        return jsonify({"userId":user["_id"],"token":token.decode('UTF-8'),"userName":user["name"]}) , 200
     
 
 
@@ -45,9 +47,22 @@ class User:
 
         if user:
             token = jwt.encode({'name':user['name'],'email':user['email'],'exp': datetime.utcnow() + timedelta(minutes=30)},app.secret_key)
-            return jsonify({ "userId":user["_id"],"token":token.decode('UTF-8') }) , 200
+            return jsonify({ "userId":user["_id"],"token":token.decode('UTF-8'),"userName":user["name"] }) , 200
         else:
             return jsonify({"message":"no such user"}) , 404
             
 
+    def returnUserData(self,userId):
+        print(f'Fetching user data for id {userId}')
+        user =  db.users.find_one({"_id":userId})
+        if not user:
+            return jsonify({'message':'No such user found!'}) , 404
+        else:
+            send_data = {
+               "userName": user["name"],
+               "userEmail": user["email"],
+               "userRole": user["role"],
+               "accountDate": user["account_created"]
+            }
+            return jsonify(send_data) , 200
 

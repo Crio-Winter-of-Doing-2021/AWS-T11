@@ -1,16 +1,16 @@
-import auth from './auth';
+import auth from "./auth";
 
 function Logout(props) {
-
   return (
-    <button  onClick={() => {
+    <button
+      onClick={() => {
         auth.logout(() => {
-            localStorage.clear();
-            props.history.push("/");
+          localStorage.clear();
+          props.history.push("/");
         });
       }}
     >
-     Logout
+      Logout
     </button>
   );
 }
