@@ -5,6 +5,7 @@ from app import db
 from datetime import datetime , timedelta
 import jwt
 from application import app
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class User:
@@ -33,7 +34,7 @@ class User:
         if '@gmail.com' not in user["email"]:
             return {"message":"invalid email"} , 422
 
-        user["password"] = pbkdf2_sha256.encrypt(user["password"])
+        user["password"] = generate_password_hash(user["password"])
 
         db.users.insert_one(user)
 
@@ -44,6 +45,14 @@ class User:
     def verifyUser(self,data):
         print(f'Checking for user in database . . . for {data["email"]}')
         user = db.users.find_one({"email":data["email"]})
+
+        # test = pbkdf2_sha256.decode(user["password"])
+        # print('This: '+user["password"])
+        hash =  user["password"]
+        if( check_password_hash(hash,data["password"]) ):
+            print("Password Matched!")
+        else:
+            user = None
 
         if user:
             token = jwt.encode({'name':user['name'],'email':user['email'],'exp': datetime.utcnow() + timedelta(minutes=30)},app.secret_key)

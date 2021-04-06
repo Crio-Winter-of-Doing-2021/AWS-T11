@@ -19,15 +19,12 @@ function Task({ data, functionChange }) {
   const _userId = local_storage["userId"];
   const _isAdmin = local_storage["Admin"];
 
-  // if (_isAdmin) console.log("Check from TASK.js user is Admin");
-  // else console.log("Check from TASK.js user is not Admin");
-
   var isAuthenticatedUserTask =
     _userId === data.user_id || _isAdmin ? true : false;
 
   const cancelHandler = () => {
     const send_data = {
-      taskid: data.taskid,
+      taskid: data.taskid,  
     };
 
     const local_token = JSON.parse(localStorage.getItem("login"));
@@ -86,7 +83,7 @@ function Task({ data, functionChange }) {
       <td>{data.last_modified}</td>
       <td>{renderModifyAs}</td>
       <td>{renderCancelAs}</td>
-      {/* <td><button id="InfoButton">i</button></td> */}
+      <td><button id="InfoButton">i</button></td>
     </tr>
   );
 }

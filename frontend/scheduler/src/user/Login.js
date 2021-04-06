@@ -50,7 +50,7 @@ class Login extends Component {
         .then(function (response) {
           if (!response.ok) {
             if (response.status === 404) {
-              alert("Invalid Email !");
+              alert("Invalid Email or Password!");
               window.location.reload();
             }
             throw new Error("HTTP status " + response.status);

@@ -1,11 +1,10 @@
-from flask import Flask,request , jsonify
+from flask import Flask,request 
 from flask_cors import CORS
 from flask import jsonify
 import task
 import json
 from functools import wraps
 import jwt
-
 
 app = Flask(__name__)
 app.secret_key = b'\x88\xa6\xd6\x7f,\xbb}\xf9\x7f=\xa4\x08\x99\x94q\xc3'
