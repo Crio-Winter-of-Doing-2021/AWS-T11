@@ -13,18 +13,25 @@ taskDict = {}
 
 class Task:
 
-    def __init__(self,url,seconds,idReq,userId):
-        self.url = url
-        self.seconds = seconds
-        self.tid = idReq
+    def __init__(self,task_data,new_id):
+        self.name = task_data["taskName"]
+        self.url = task_data["taskurl"]
+        self.seconds = int(task_data["delay"])
+        self.tid = new_id
         self.test = None
-        self.userId = userId
+        self.userId = task_data["userId"]
+        if len(task_data["taskParameters"]) != 0:
+            self.havePara = True
+        else:
+            self.havePara = False
+        self.taskParameters = task_data["taskParameters"]
         self.addInDb()
         
     def addInDb(self):
         ref = pickle.dumps(self)
         d = datetime.now()
         data = {
+            "taskName":self.name,
             "taskid":int(self.tid),
             "status":"SCHEDULED",
             "time_delay":int(self.seconds),
@@ -35,25 +42,32 @@ class Task:
             "last_modified":d,
             "user_id":self.userId,
             "status_code":"",
-            "url_params":[]
+            "url_params":self.taskParameters
         }
         db.scheduler.insert_one(data) 
         print(f'Task {self.tid} ADDED at : {datetime.now().time()}')
 
     async def scheduleTask(self):
-
+        
         db.scheduler.update_one({'taskid':self.tid},{"$set":{'status':'SCHEDULED'}})
         
         try:
+            print(f"Scheduled task! with id: {self.tid} ")
             await asyncio.sleep(self.seconds)
         except asyncio.CancelledError:
             print(f'{self.tid} task is cancellation confirmed!')
             raise
 
+        
         data = db.scheduler.find_one({"taskid":self.tid})
         print(f'Status check for {self.tid} !')
         if data["status"] == "SCHEDULED":
+            
+
             try:
+                if(self.havePara):
+                    self.addParameterToUrl()
+
                 result = requests.get(self.url)
                 db.scheduler.update_one({'taskid':self.tid},{"$set":{'status':'RUNNING'}})
                 if(result.status_code == 200):
@@ -70,6 +84,18 @@ class Task:
                 print(e)
     
     
+    def addParameterToUrl(self):
+        for index , item in enumerate(self.taskParameters):
+            if(index == 0):
+                self.url += "?"
+            else:
+                self.url += "&"
+            self.url += item["key"]
+            self.url += "="
+            self.url += item["value"]
+                 
+        print("In the required function: "+self.url)
+
     async def intitialize(self):
         print(f'Task {self.tid} initialize() called at : {datetime.now().time()}')
         test = asyncio.create_task(self.scheduleTask())
@@ -87,14 +113,21 @@ class Task:
 
 
 # Functions part
-
-def CreateLamdaTask(url,delay=0,userId=0,params=None):
+# (url,delay=0,userId=0,params=None
+def CreateLamdaTask(req_data):
     try:
+
+        data = req_data
+        print(data["taskParameters"])
+
         no_tasks = db.scheduler.find().count()
         new_id = no_tasks + 1
-        t = Task(url,int(delay),new_id,userId)
+
+        t = Task(req_data,new_id)
+
         asyncio.run(t.intitialize())
-        return json.dumps(new_id)
+        print(new_id)
+        return new_id
     except Exception as e:
         print(e)
         return str(e)

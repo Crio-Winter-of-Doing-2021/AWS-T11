@@ -54,6 +54,7 @@ class AllTask extends Component {
         .then((response) => {
           var t = response;
           t = this.convertAllDate(t);
+          console.log(t);
           this.setState({ tasks: t });
         })
         .catch((err) => console.log(err));
@@ -62,20 +63,26 @@ class AllTask extends Component {
     }
   };
 
+  // 7/4/21-(16:08:20)
+
   convertAllDate(t) {
     t.map((task) => {
       let ret_time = task["last_modified"];
       let convert_date = new Date(ret_time["$date"]);
+
+      console.log(convert_date.getDate() , convert_date.getMonth());
+
+      let dateString = convert_date.getDate()+"/"+convert_date.getMonth()+"/"+convert_date.getFullYear() ;
+
       let testDateString =
+      dateString + "-"+
+      "(" +
         convert_date.getHours() +
-        " : " +
+        ":" +
         convert_date.getMinutes() +
-        " : " +
-        convert_date.getSeconds();
-      // console.log(
-      //   "DATE : "
-      //   // convert_date.toLocaleString(undefined, { timeZone: "Asia/Kolkata" })
-      // );
+        ":" +
+        convert_date.getSeconds() +")";
+
       task["last_modified"] = testDateString;
       return "";
     });
@@ -98,7 +105,7 @@ class AllTask extends Component {
           <div>
             <label name="status">Select Status:</label>
             <select name="status" id="status" onChange={this.handleEvent}>
-              <option value="ALL">ALL</option>  
+              <option value="ALL">ALL</option>
               <option value="SCHEDULED">SCHEDULED</option>
               <option value="COMPLETED">COMPLETED</option>
               <option value="RUNNING">RUNNING</option>
@@ -113,15 +120,16 @@ class AllTask extends Component {
               id="userSpecific"
               onChange={this.handleEvent}
             >
-              <option value="YES">YES</option>
-              <option value="NO">NO</option>
+              <option value="YES">YES &nbsp;&nbsp;&nbsp;&nbsp;</option>
+              <option value="NO">NO &nbsp;&nbsp;&nbsp;&nbsp;</option>
             </select>
           </div>
         </div>
+        
         <Table borderless hover variant="" className="taskTable">
           <thead>
             <tr>
-              <th>Task ID</th>
+              <th>Task Name</th>
               <th>Status</th>
               <th>Delay (Seconds)</th>
               <th>Last Modified</th>

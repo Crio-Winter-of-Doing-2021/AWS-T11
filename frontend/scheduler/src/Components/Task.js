@@ -1,7 +1,6 @@
 import React from "react";
 import "../css/App.css";
 import "../css/login.css";
-
 import { Link } from "react-router-dom";
 
 function Task({ data, functionChange }) {
@@ -15,6 +14,16 @@ function Task({ data, functionChange }) {
     color: "white",
   };
 
+  const taskInformation = {
+    taskName: data.taskName,
+    taskId: data.taskId,
+    taskDelay: data.time_delay,
+    taskStatus: data.status,
+    taskOwner: data.user_id,
+    taskResponse: data.ret_message,
+    taskLastModified: data.last_modified,
+  };
+
   const local_storage = JSON.parse(localStorage.getItem("login"));
   const _userId = local_storage["userId"];
   const _isAdmin = local_storage["Admin"];
@@ -24,7 +33,7 @@ function Task({ data, functionChange }) {
 
   const cancelHandler = () => {
     const send_data = {
-      taskid: data.taskid,  
+      taskid: data.taskid,
     };
 
     const local_token = JSON.parse(localStorage.getItem("login"));
@@ -75,15 +84,25 @@ function Task({ data, functionChange }) {
   );
 
   return (
-    <tr>
-      <td>{data.taskid}</td>
+    <tr id="taskTR">
+      <td>{data.taskName}</td>
       <td>{data.status}</td>
       <td>{data.time_delay}</td>
       {/* <td></td> */}
       <td>{data.last_modified}</td>
       <td>{renderModifyAs}</td>
       <td>{renderCancelAs}</td>
-      <td><button id="InfoButton">i</button></td>
+      <td id="InfoTD">
+        <Link to={{
+          pathname:"/Dashboard/taskdata",
+          state:{
+            data: taskInformation
+          }
+        }} style={navStyle}>
+          {" "}
+          <button id="InfoButton" >i</button>
+        </Link>
+      </td>
     </tr>
   );
 }

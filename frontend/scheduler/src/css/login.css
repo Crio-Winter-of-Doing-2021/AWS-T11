@@ -24,14 +24,13 @@
     text-align: center;
 }
 
-.allTaskOptions{
+/* .allTaskOptions{
     display: flex;
     justify-content: space-around;
     margin: auto;
     width: 50%;
     margin-top: 25px;
-    /* background-color: red; */
-}
+} */
 
 #InfoButton{
     font-family: 'Pacifico', cursive;

@@ -1,8 +1,9 @@
 import auth from "./auth";
+import '../css/App.css'
 
 function Logout(props) {
   return (
-    <button
+    <button id="LogoutButton"
       onClick={() => {
         auth.logout(() => {
           localStorage.clear();
@@ -10,7 +11,7 @@ function Logout(props) {
         });
       }}
     >
-      Logout
+      Log out
     </button>
   );
 }
