@@ -11,6 +11,7 @@ function Nav(props) {
     textDecoration: "none",
   };
 
+  
   return (
     <nav id="CustomTaskNav">
       <Link style={navStyle} to="/Dashboard">

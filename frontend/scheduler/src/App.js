@@ -27,6 +27,8 @@ class App extends Component {
     };
   }
 
+  
+
   componentDidMount() {
     console.log("In APP mount !"+this.props.location.state.userName);
     try {

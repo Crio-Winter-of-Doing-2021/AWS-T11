@@ -71,40 +71,62 @@ function Task({ data, functionChange }) {
         },
       }}
     >
-      <button>Modify</button>
+      <button className="taskModifyButton">Modify</button>
     </Link>
   ) : (
-    <button style={modifyButton}>Modify</button>
+    <button className="taskModifyButton" style={modifyButton}>Modify</button>
   );
 
   const renderCancelAs = isAuthenticatedUserTask ? (
-    <button onClick={cancelHandler}>Cancel</button>
+    <button className="taskCancelButton" onClick={cancelHandler}>Cancel</button>
   ) : (
-    <button style={modifyButton}>Cancel</button>
+    <button className="taskCancelButton"  style={modifyButton}>Cancel</button>
   );
 
   return (
     <tr id="taskTR">
+      <td>{data.taskid}</td>
       <td>{data.taskName}</td>
       <td>{data.status}</td>
-      <td>{data.time_delay}</td>
+
       {/* <td></td> */}
       <td>{data.last_modified}</td>
       <td>{renderModifyAs}</td>
       <td>{renderCancelAs}</td>
       <td id="InfoTD">
-        <Link to={{
-          pathname:"/Dashboard/taskdata",
-          state:{
-            data: taskInformation
-          }
-        }} style={navStyle}>
-          {" "}
-          <button id="InfoButton" >i</button>
-        </Link>
+        {
+          <Link
+            to={{
+              pathname: "/Dashboard/taskdata",
+              state: {
+                data: taskInformation,
+              },
+            }}
+            style={navStyle}
+          >
+            <button  id="InfoButton">i</button>
+          </Link>
+        }
       </td>
     </tr>
   );
 }
 
 export default Task;
+
+/*
+<td id="InfoTD">
+        { <Link
+          to={{
+            pathname: "/Dashboard/taskdata",
+            state: {
+              data: taskInformation,
+            },
+          }}
+          style={navStyle}
+        >
+          <button id="InfoButton">i</button>
+        </Link> }
+        <button id="InfoButton">i</button>
+      </td>
+*/

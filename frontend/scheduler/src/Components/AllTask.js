@@ -54,7 +54,7 @@ class AllTask extends Component {
         .then((response) => {
           var t = response;
           t = this.convertAllDate(t);
-          console.log(t);
+          // console.log(t);
           this.setState({ tasks: t });
         })
         .catch((err) => console.log(err));
@@ -69,8 +69,6 @@ class AllTask extends Component {
     t.map((task) => {
       let ret_time = task["last_modified"];
       let convert_date = new Date(ret_time["$date"]);
-
-      console.log(convert_date.getDate() , convert_date.getMonth());
 
       let dateString = convert_date.getDate()+"/"+convert_date.getMonth()+"/"+convert_date.getFullYear() ;
 
@@ -129,9 +127,9 @@ class AllTask extends Component {
         <Table borderless hover variant="" className="taskTable">
           <thead>
             <tr>
+              <th>Task ID</th>
               <th>Task Name</th>
               <th>Status</th>
-              <th>Delay (Seconds)</th>
               <th>Last Modified</th>
             </tr>
           </thead>

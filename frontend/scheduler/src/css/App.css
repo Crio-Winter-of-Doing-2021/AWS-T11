@@ -39,12 +39,6 @@ option {
 #taskTR td {
   font-family: ProximaReguler;
 }
-/* 
-#InfoTD button{
-  border-radius:50px;
-  text-align: center;
-  display: inline-block;
-} */
 
 #createTaskForm {
   padding-top: 50px;
@@ -129,6 +123,19 @@ p {
   margin: 0px;
 }
 
+#test{
+  color: #a7d2f8;
+}
+
+#InfoButton{
+  font-family: Pacifico;
+  text-transform: lowercase;
+  font-size: 1.1em;
+  border-radius: 20px;
+  background-color: #f3f3f3;
+  border: none;
+}
+
 .taskClass {
   display: flex;
   color: white;
@@ -149,7 +156,8 @@ p {
 
 .taskCancelButton,
 .taskModifyButton {
-  color: white;
+  background-color: #f3f3f3;
+  border: none;
 }
 
 #createTaskButton {
@@ -177,3 +185,5 @@ Table {
 .parameters label {
   margin-top: 5px;
 }
+
+

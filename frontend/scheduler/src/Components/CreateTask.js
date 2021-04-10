@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import "../css/App.css";
 
-// #C7E5FF
-
 class CreateTask extends Component {
   constructor(props) {
     super(props);
@@ -12,6 +10,9 @@ class CreateTask extends Component {
       taskName: "",
       para_count: 0,
       submitted: false,
+      time_system: "",
+      secondBtnC: "",
+      dateBtnC: "",
       parameters: [
         { key: "", value: "" },
         { key: "", value: "" },
@@ -32,11 +33,16 @@ class CreateTask extends Component {
     const local_token = JSON.parse(localStorage.getItem("login"));
     var myHeader = new Headers();
     myHeader.append("Authorization", "Bearer " + local_token["token"]);
-    myHeader.append("Content-Type", "application/json");  
+    myHeader.append("Content-Type", "application/json");
 
     var send_para = [];
-    for(let i = 0; i < this.state.para_count; i++) {
+    for (let i = 0; i < this.state.para_count; i++) {
       send_para.push(this.state.parameters[i]);
+    }
+
+    if (this.state.time_system == "date_time") {
+      console.log("SEE :", this.state.delay);
+      return;
     }
 
     console.log(send_para);
@@ -46,7 +52,7 @@ class CreateTask extends Component {
       delay: this.state.delay,
       userId: local_token["userId"],
       taskName: this.state.taskName,
-      taskParameters: send_para
+      taskParameters: send_para,
     };
 
     fetch("http://localhost:3000/create_task", {
@@ -93,7 +99,7 @@ class CreateTask extends Component {
   createNewTask = async () => {};
 
   render() {
-    const { taskurl, delay, taskName, para_count } = this.state;
+    const { taskurl, delay, taskName, para_count, time_system } = this.state;
     let render_paramters = [];
     if (para_count === 0) render_paramters = "";
     else
@@ -117,6 +123,36 @@ class CreateTask extends Component {
           </div>
         );
       }
+
+    let render_time_input;
+    if (time_system == "") render_time_input = "";
+    else if (time_system == "seconds")
+      render_time_input = (
+        <label>
+          Delay(Seconds):
+          <input
+            type="text"
+            value={delay}
+            className="u-full-width"
+            name="delay"
+            id="name"
+            onChange={this.handleChange}
+          />
+        </label>
+      );
+    else if (time_system == "date_time")
+      render_time_input = (
+        <label>
+          Date:
+          <input
+            name="delay"
+            className="u-full-width"
+            type="date"
+            onChange={this.handleChange}
+          ></input>
+        </label>
+      );
+
     return (
       <div className="container">
         <form
@@ -153,7 +189,11 @@ class CreateTask extends Component {
                 Add Parameters
               </button>
               <button
-                style={{ marginLeft: "10px", fontWeight: "bold" }}
+                style={{
+                  marginLeft: "10px",
+                  fontWeight: "bold",
+                  marginBottom: "5px",
+                }}
                 name="TEST02"
                 onClick={this.decrementParameters}
               >
@@ -162,17 +202,38 @@ class CreateTask extends Component {
             </div>
           </label>
 
-          <label>
-            Delay(Seconds):
-            <input
-              type="text"
-              value={delay}
-              className="u-full-width"
-              name="delay"
-              id="name"
-              onChange={this.handleChange}
-            />
-          </label>
+          {render_time_input}
+
+          <div>
+            <button
+              style={{ color: this.state.dateBtnC }}
+              onClick={() =>
+                this.setState({
+                  time_system: "date_time",
+                  secondBtnC: "",
+                  dateBtnC: "#95c7f3",
+                })
+              }
+            >
+              Date
+            </button>
+            <button
+              style={{
+                marginLeft: "10px",
+                marginBottom: "10px",
+                color: this.state.secondBtnC,
+              }}
+              onClick={() =>
+                this.setState({
+                  time_system: "seconds",
+                  secondBtnC: "#95c7f3",
+                  dateBtnC: "",
+                })
+              }
+            >
+              Seconds
+            </button>
+          </div>
 
           <div className="">
             <button

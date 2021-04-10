@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "../css/App.css";
+import "../css/login.css"
 
 class TaskData extends Component {
   constructor(props) {
@@ -24,6 +25,8 @@ class TaskData extends Component {
           <h5>Owner: {this.state.taskOwner} </h5>
           <h5>Response: { this.state.taskResponse } </h5>
           <h5>Last Modified: {this.state.taskLastModified} </h5>
+          <h5>Delay(Seconds): {this.state.taskDelay}</h5>
+          {/* <button id="InfoButton">i</button> */}
         </div>
       </div>
     );
