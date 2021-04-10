@@ -48,13 +48,16 @@ class User:
 
         # test = pbkdf2_sha256.decode(user["password"])
         # print('This: '+user["password"])
-        hash =  user["password"]
-        if( check_password_hash(hash,data["password"]) ):
-            print("Password Matched!")
-        else:
-            user = None
+        
 
         if user:
+
+            hash =  user["password"]
+            if( check_password_hash(hash,data["password"]) ):
+                print("Password Matched!")
+            else:
+                return jsonify({"message":"password not matched!"}) , 404
+
             token = jwt.encode({'name':user['name'],'email':user['email'],'exp': datetime.utcnow() + timedelta(minutes=30)},app.secret_key)
             return jsonify({ "userId":user["_id"],"token":token.decode('UTF-8'),"userName":user["name"] }) , 200
         else:

@@ -3,6 +3,8 @@ import AllTask from "./Components/AllTask";
 import CreateTask from "./Components/CreateTask";
 import Nav from "./Components/Nav";
 import ModifyComponent from "./Components/ModifyComponent";
+import TaskData from "./Components/TaskData";
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -24,6 +26,8 @@ class App extends Component {
       userId: "",
     };
   }
+
+  
 
   componentDidMount() {
     console.log("In APP mount !"+this.props.location.state.userName);
@@ -73,6 +77,10 @@ class App extends Component {
             <ProtectedRoute
               path="/Dashboard/modify_task"
               component={ModifyComponent}
+            />
+            <ProtectedRoute
+              path="/Dashboard/taskdata"
+              component={TaskData}
             />
           </Switch>
         </div>

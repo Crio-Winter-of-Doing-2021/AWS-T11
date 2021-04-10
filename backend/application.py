@@ -21,18 +21,11 @@ from app import login_required
 def create_task():
     # return {'message':'test'}
     if request.method == 'POST':
-        if(request.form):   
-            data = request.form
-            url = data["url"]
-            delay = data["delay"]
-            ret_task_id = task.CreateLamdaTask(url,delay)
-            return {'message':ret_task_id} , 200
-        else:
             data = request.json
-            url = data["taskurl"]
-            delay = data["delay"]
-            userId = data["userId"]
-            ret_task_id = task.CreateLamdaTask(url,delay,userId)
+            # url = data["taskurl"]
+            # delay = data["delay"]
+            # userId = data["userId"]
+            ret_task_id = task.CreateLamdaTask(data)
             return {'taskid':ret_task_id} , 200
     else:
         return {'message':'ERROR!'} , 400

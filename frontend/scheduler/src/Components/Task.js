@@ -1,7 +1,6 @@
 import React from "react";
 import "../css/App.css";
 import "../css/login.css";
-
 import { Link } from "react-router-dom";
 
 function Task({ data, functionChange }) {
@@ -15,6 +14,16 @@ function Task({ data, functionChange }) {
     color: "white",
   };
 
+  const taskInformation = {
+    taskName: data.taskName,
+    taskId: data.taskId,
+    taskDelay: data.time_delay,
+    taskStatus: data.status,
+    taskOwner: data.user_id,
+    taskResponse: data.ret_message,
+    taskLastModified: data.last_modified,
+  };
+
   const local_storage = JSON.parse(localStorage.getItem("login"));
   const _userId = local_storage["userId"];
   const _isAdmin = local_storage["Admin"];
@@ -24,7 +33,7 @@ function Task({ data, functionChange }) {
 
   const cancelHandler = () => {
     const send_data = {
-      taskid: data.taskid,  
+      taskid: data.taskid,
     };
 
     const local_token = JSON.parse(localStorage.getItem("login"));
@@ -62,30 +71,62 @@ function Task({ data, functionChange }) {
         },
       }}
     >
-      <button>Modify</button>
+      <button className="taskModifyButton">Modify</button>
     </Link>
   ) : (
-    <button style={modifyButton}>Modify</button>
+    <button className="taskModifyButton" style={modifyButton}>Modify</button>
   );
 
   const renderCancelAs = isAuthenticatedUserTask ? (
-    <button onClick={cancelHandler}>Cancel</button>
+    <button className="taskCancelButton" onClick={cancelHandler}>Cancel</button>
   ) : (
-    <button style={modifyButton}>Cancel</button>
+    <button className="taskCancelButton"  style={modifyButton}>Cancel</button>
   );
 
   return (
-    <tr>
+    <tr id="taskTR">
       <td>{data.taskid}</td>
+      <td>{data.taskName}</td>
       <td>{data.status}</td>
-      <td>{data.time_delay}</td>
+
       {/* <td></td> */}
       <td>{data.last_modified}</td>
       <td>{renderModifyAs}</td>
       <td>{renderCancelAs}</td>
-      <td><button id="InfoButton">i</button></td>
+      <td id="InfoTD">
+        {
+          <Link
+            to={{
+              pathname: "/Dashboard/taskdata",
+              state: {
+                data: taskInformation,
+              },
+            }}
+            style={navStyle}
+          >
+            <button  id="InfoButton">i</button>
+          </Link>
+        }
+      </td>
     </tr>
   );
 }
 
 export default Task;
+
+/*
+<td id="InfoTD">
+        { <Link
+          to={{
+            pathname: "/Dashboard/taskdata",
+            state: {
+              data: taskInformation,
+            },
+          }}
+          style={navStyle}
+        >
+          <button id="InfoButton">i</button>
+        </Link> }
+        <button id="InfoButton">i</button>
+      </td>
+*/
