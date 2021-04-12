@@ -9,15 +9,14 @@ import {
   BrowserRouter as Router,
   Switch,
   Redirect,
-  Route
+  Route,
 } from "react-router-dom";
 import React, { Component } from "react";
 import { ProtectedRoute } from "./user/protected.route";
 import auth from "./user/auth";
-import UserData from './user/UserData';
+import UserData from "./user/UserData";
 
 class App extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -27,19 +26,16 @@ class App extends Component {
     };
   }
 
-  
-
   componentDidMount() {
-    console.log("In APP mount !"+this.props.location.state.userName);
+    console.log("In APP mount !" + this.props.location.state.userName);
     try {
       let local_storage = JSON.parse(localStorage.getItem("login"));
-      if(local_storage["login"]){
-        var _name =  local_storage["userName"];
+      if (local_storage["login"]) {
+        var _name = local_storage["userName"];
         var _id = local_storage["UserId"];
-        auth.login(_name,_id);
-        this.setState({login:true , userName:_name , userId:_id});
-      }
-      else console.log("failed test");
+        auth.login(_name, _id);
+        this.setState({ login: true, userName: _name, userId: _id });
+      } else console.log("failed test");
     } catch (err) {
       console.log("No able to retrieve values from LocalStorage in App.js");
     }
@@ -55,20 +51,19 @@ class App extends Component {
             <h1>Welcome {this.state.userName}</h1>
           </div> */}
           <Switch>
-          <Route
-                exact
-                path="/Dashboard"
-                render={() => {
-                    return (
-                      <Redirect to="/Dashboard/home" {...this.props} /> 
-                    )
-                }}
-              />
-            <ProtectedRoute path="/Dashboard/home" {...this.props} component={UserData} />
-          <ProtectedRoute
-              path="/Dashboard/userdata"
+            <Route
+              exact
+              path="/Dashboard"
+              render={() => {
+                return <Redirect to="/Dashboard/home" {...this.props} />;
+              }}
+            />
+            <ProtectedRoute
+              path="/Dashboard/home"
+              {...this.props}
               component={UserData}
             />
+            <ProtectedRoute path="/Dashboard/userdata" component={UserData} />
             <ProtectedRoute
               path="/Dashboard/createtask"
               component={CreateTask}
@@ -78,10 +73,7 @@ class App extends Component {
               path="/Dashboard/modify_task"
               component={ModifyComponent}
             />
-            <ProtectedRoute
-              path="/Dashboard/taskdata"
-              component={TaskData}
-            />
+            <ProtectedRoute path="/Dashboard/taskdata" component={TaskData} />
           </Switch>
         </div>
       </Router>

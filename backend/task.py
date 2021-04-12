@@ -25,7 +25,11 @@ class Task:
         else:
             self.havePara = False
         self.taskParameters = task_data["taskParameters"]
+        self.retry_count = task_data["retry_count"]
+        self.retry_duration = task_data["retry_duration"]
+        self.failed_count = 0
         self.addInDb()
+        
         
     def addInDb(self):
         ref = pickle.dumps(self)
@@ -42,10 +46,14 @@ class Task:
             "last_modified":d,
             "user_id":self.userId,
             "status_code":"",
-            "url_params":self.taskParameters
+            "url_params":self.taskParameters,
+            "exec_error":"",
+            "failed_count":self.failed_count,
+            "retry_count":self.retry_count,
+            "retry_duration":self.retry_duration
         }
         db.scheduler.insert_one(data) 
-        print(f'Task {self.tid} ADDED at : {datetime.now().time()}')
+        print(f'Task {self.tid} ADDED at : {datetime.now().time().strftime("%H:%M:%S")}')
 
     async def scheduleTask(self):
         
@@ -53,37 +61,68 @@ class Task:
         
         try:
             print(f"Scheduled task! with id: {self.tid} ")
-            await asyncio.sleep(self.seconds)
+            if(self.failed_count > 0):
+                await asyncio.sleep(self.retry_duration)
+            else:
+                await asyncio.sleep(self.seconds)
         except asyncio.CancelledError:
             print(f'{self.tid} task is cancellation confirmed!')
             raise
 
         
         data = db.scheduler.find_one({"taskid":self.tid})
-        print(f'Status check for {self.tid} !')
+        
         if data["status"] == "SCHEDULED":
-            
-
             try:
                 if(self.havePara):
                     self.addParameterToUrl()
 
                 result = requests.get(self.url)
                 db.scheduler.update_one({'taskid':self.tid},{"$set":{'status':'RUNNING'}})
+                print(f'Running {self.tid} at : {datetime.now().time().strftime("%H:%M:%S")}')
                 if(result.status_code == 200):
                     db.scheduler.update_one({"taskid":self.tid},{"$set":{"status":"COMPLETED"}})
                     # print(result.json())
                     db.scheduler.update_one({"taskid":self.tid},{"$set":{"ret_message":result.json()}})
-                    print(f'Task {self.tid} COMPLETED at : {datetime.now().time()}')
+                    print(f'Task {self.tid} COMPLETED at : {datetime.now().time().strftime("%H:%M:%S")}')
                 else:
                     db.scheduler.update_one({"taskid":self.tid},{"$set":{"status":"FAILED"}})
                     db.scheduler.update_one({"taskid":self.tid},{"$set":{"ret_message":result.json()}})
-                    print(f'Task {self.tid} FAILED at : {datetime.now().time()}') 
+                    print(f'Task {self.tid} FAILED at : {datetime.now().time().strftime("%H:%M:%S")}')
+
+                    # performing retries
+                    if self.retry_count > 0:
+                        self.retry_count -= 1
+                        self.failed_count += 1
+                        db.scheduler.update_one({'taskid':self.tid},{"$set":{'status':'SCHEDULED',
+                        "retry_count":self.retry_count,
+                        "failed_count":self.failed_count}})
+                        
+                        loop = asyncio.get_event_loop()
+                        print(f'Task {self.tid} retryTask() called at : {datetime.now().time().strftime("%H:%M:%S")}')
+                        test = loop.create_task(self.scheduleTask())
+                        taskDict[self.tid] = [test,self]
+                        try:
+                            await test
+                        except asyncio.CancelledError:
+                            print("In initialize task : ")
+
             except Exception as e:
-                db.scheduler.update_one({"taskid":self.tid},{"$set":{"status":"FAILED"}})
+                db.scheduler.update_one({"taskid":self.tid},{"$set":{"status":"FAILED","exec_error":e}})
                 print(e)
     
+    async def intitialize(self):
+        print(f'Task {self.tid} initialize() called at : {datetime.now().time().strftime("%H:%M:%S")}')
+        test = asyncio.create_task(self.scheduleTask())
+        print(type(test))
+        # db.taskRef.insert_one(data)
+        taskDict[self.tid] = [test,self]
+        try:
+            await test
+        except asyncio.CancelledError:
+            print("In initialize task : ")
     
+
     def addParameterToUrl(self):
         for index , item in enumerate(self.taskParameters):
             if(index == 0):
@@ -96,16 +135,7 @@ class Task:
                  
         print("In the required function: "+self.url)
 
-    async def intitialize(self):
-        print(f'Task {self.tid} initialize() called at : {datetime.now().time()}')
-        test = asyncio.create_task(self.scheduleTask())
-        print(type(test))
-        # db.taskRef.insert_one(data)
-        taskDict[self.tid] = [test,self]
-        try:
-            await test
-        except asyncio.CancelledError:
-            print("In initialize task : ")  
+      
 
     def getStatus(self):
         data = db.scheduler.find_one({"taskid":self.tid})
@@ -189,7 +219,7 @@ def getAllTask(statusOf=None):
   
 
 def reintializeTask(taskID,delay_val):
-    print(f'Task {taskID} reinitialize() called at : {datetime.now().time()}')
+    print(f'Task {taskID} reinitialize() called at : {datetime.now().time().strftime("%H:%M:%S")}')
     taskObect = taskDict[taskID][1]
     task_Ref = taskDict[taskID][0]
 
