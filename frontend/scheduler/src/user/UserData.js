@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "../css/App.css";
+import auth from './auth';
 
 class UserData extends Component {
   constructor(props) {
@@ -20,6 +21,8 @@ class UserData extends Component {
         var _name = local_storage["userName"];
         var _id = local_storage["userId"];
         // this.setState({ userName: _name, userId: _id });
+
+        // console.log("TEST : ",auth.isAuthenticated());
 
         var send_data = { userId: _id };
         console.log("this is send_data : ", send_data);
@@ -70,7 +73,7 @@ class UserData extends Component {
       <div className="DetailsContainer">
         <div id="UserDetailsBlock">
           <h3>{this.state.userName}</h3>
-          <span>({this.state.userRole})</span>
+          <test>({this.state.userRole})</test>
           <h4>{this.state.userEmail}</h4>
         </div>
       </div>

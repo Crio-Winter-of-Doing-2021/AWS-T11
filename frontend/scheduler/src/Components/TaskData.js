@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "../css/App.css";
-import "../css/login.css"
+import "../css/login.css";
 
 class TaskData extends Component {
   constructor(props) {
@@ -16,16 +16,33 @@ class TaskData extends Component {
       taskLastModified: this.props.location.state.data.taskLastModified,
     };
   }
+
   render() {
-    return (    
+    return (
       <div className="DetailsContainer">
+        <h5>
+          <span> Name: </span>
+          {this.state.taskName}
+        </h5>
+
         <div id="TaskDetailsBlock">
-          <h5>Name: {this.state.taskName}</h5>
-          <h5>Status: {this.state.taskStatus}</h5>
-          <h5>Owner: {this.state.taskOwner} </h5>
-          <h5>Response: { this.state.taskResponse } </h5>
-          <h5>Last Modified: {this.state.taskLastModified} </h5>
-          <h5>Delay(Seconds): {this.state.taskDelay}</h5>
+          <h5>
+            <span> Status: </span> {this.state.taskStatus}
+          </h5>
+          <h5>
+            <span> Owner: </span> {this.state.taskOwner}
+          </h5>
+          <h5>
+            <span> Response: </span> {this.state.taskResponse}
+          </h5>
+          <h5>
+            <span>Last Modified:</span> {this.state.taskLastModified}
+          </h5>
+          <h5>
+            <span> Delay(Seconds): </span>
+            {this.state.taskDelay}
+          </h5>
+         
           {/* <button id="InfoButton">i</button> */}
         </div>
       </div>

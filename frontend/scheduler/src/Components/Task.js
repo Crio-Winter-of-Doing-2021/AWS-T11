@@ -10,7 +10,7 @@ function Task({ data, functionChange }) {
   };
 
   const modifyButton = {
-    backgroundColor: "rgba(242, 7, 7,0.5)",
+    backgroundColor: "#ff7e7e",
     color: "white",
   };
 
@@ -74,13 +74,19 @@ function Task({ data, functionChange }) {
       <button className="taskModifyButton">Modify</button>
     </Link>
   ) : (
-    <button className="taskModifyButton" style={modifyButton}>Modify</button>
+    <button className="taskModifyButton" style={modifyButton}>
+      Modify
+    </button>
   );
 
   const renderCancelAs = isAuthenticatedUserTask ? (
-    <button className="taskCancelButton" onClick={cancelHandler}>Cancel</button>
+    <button className="taskCancelButton" onClick={cancelHandler}>
+      Cancel
+    </button>
   ) : (
-    <button className="taskCancelButton"  style={modifyButton}>Cancel</button>
+    <button className="taskCancelButton" style={modifyButton}>
+      Cancel
+    </button>
   );
 
   return (
@@ -104,7 +110,7 @@ function Task({ data, functionChange }) {
             }}
             style={navStyle}
           >
-            <button  id="InfoButton">i</button>
+            <button id="InfoButton"> &nbsp;i &nbsp;</button>
           </Link>
         }
       </td>

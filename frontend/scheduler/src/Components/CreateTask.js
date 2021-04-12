@@ -19,6 +19,8 @@ class CreateTask extends Component {
         { key: "", value: "" },
         { key: "", value: "" },
       ],
+      retry_count : "",
+      retry_duration : ""
     };
   }
 
@@ -53,6 +55,8 @@ class CreateTask extends Component {
       userId: local_token["userId"],
       taskName: this.state.taskName,
       taskParameters: send_para,
+      retry_count:3,
+      retry_duration:20
     };
 
     fetch("http://localhost:3000/create_task", {
