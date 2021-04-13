@@ -48,9 +48,10 @@ option {
 
 .DetailsContainer {
   width: 100%;
-  height: 60vh;
+  /* height: 60vh; */
+  padding: 20px;
   display: flex;
-  margin-top: 25px;
+  /* margin-top: 25px; */
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -58,13 +59,14 @@ option {
 
 .DetailsContainer span{
   color: rgb(50, 151, 218);
+  /* color: #08508f; */
   font-size: 1.12em;
   font-family: Proxima;
 }
 
 #UserDetailsBlock{
   background-color: #f3f3f3;
-  margin: 0 auto;
+  margin: 70px;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -72,11 +74,6 @@ option {
   padding: 60px;
   border: none;
   border-radius: 18px;
-}
-
-hr{
-  color: red;
-  size: 3px;
 }
 
 #TaskDetailsBlock {
@@ -91,7 +88,7 @@ hr{
   border-radius: 18px;
 }
 
-#TaskDetailsBlock h5{
+#TaskDetailsBlock h5 {
   font-family: ProximaReguler;
 }
 
@@ -138,7 +135,7 @@ button {
   background-color: #c7e5ff;
   color: black;
   padding: 10px;
-  font-size: 2.1rem;
+  font-size: 1.5rem;
 }
 
 #CustomTaskNav span {

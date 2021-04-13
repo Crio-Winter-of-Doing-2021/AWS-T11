@@ -12,7 +12,7 @@ class Auth {
         this.authenticated = true;
         this.userId = userId;
         this.userName = userName;
-        console.log("User logged in : "+this.userName);
+        // console.log("User logged in : "+this.userName);
       } else this.authenticated = false;
     } catch (err) {
       this.authenticated = false;

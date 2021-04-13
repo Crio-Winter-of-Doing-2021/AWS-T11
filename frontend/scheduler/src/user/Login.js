@@ -20,7 +20,6 @@ class Login extends Component {
   };
 
   componentDidMount() {
-    console.log("In Login mount !");
     try {
       let local_storage = JSON.parse(localStorage.getItem("login"));
       if (local_storage["login"]) {
@@ -30,9 +29,9 @@ class Login extends Component {
         this.setState({ redirectToDash: true });
       } else console.log("failed to get access to localStorage data");
     } catch (err) {
-      console.log(
-        "Can not login without creditinals!"
-      );
+      // console.log(
+      //   "Can not login without creditinals!"
+      // );
       this.setState({ redirectToDash: false });
     }
   }
@@ -68,7 +67,7 @@ class Login extends Component {
               Admin: false,
             })
           );
-          console.log("Login data ! ");
+          // console.log("Login data ! ");
           auth.login(res["userName"], res["userId"]);
           this.setState({
             redirectToDash: true,

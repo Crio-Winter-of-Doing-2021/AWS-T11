@@ -1,10 +1,8 @@
-from flask import Flask,request 
+from flask import Flask,request,jsonify
 from flask_cors import CORS
-from flask import jsonify
 import task
-import json
+# import json
 from functools import wraps
-import jwt
 
 app = Flask(__name__)
 app.secret_key = b'\x88\xa6\xd6\x7f,\xbb}\xf9\x7f=\xa4\x08\x99\x94q\xc3'
@@ -22,9 +20,6 @@ def create_task():
     # return {'message':'test'}
     if request.method == 'POST':
             data = request.json
-            # url = data["taskurl"]
-            # delay = data["delay"]
-            # userId = data["userId"]
             ret_task_id = task.CreateLamdaTask(data)
             return {'taskid':ret_task_id} , 200
     else:

@@ -19,15 +19,18 @@ class CreateTask extends Component {
         { key: "", value: "" },
         { key: "", value: "" },
       ],
-      retry_count : "",
-      retry_duration : ""
+      retry_count: "",
+      retry_duration: "",
     };
   }
 
   handleSubmit = (evt) => {
     evt.preventDefault();
 
-    if (!this.state.submitted) return;
+    if (!this.state.submitted) {
+      console.log(this.state);
+      return;
+    }
 
     // console.log(this.state);
     var data = [];
@@ -42,22 +45,30 @@ class CreateTask extends Component {
       send_para.push(this.state.parameters[i]);
     }
 
-    if (this.state.time_system == "date_time") {
+    if (this.state.time_system === "date_time") {
       console.log("SEE :", this.state.delay);
       return;
     }
 
     console.log(send_para);
 
-    var send_data = {
-      taskurl: this.state.taskurl,
-      delay: this.state.delay,
-      userId: local_token["userId"],
-      taskName: this.state.taskName,
-      taskParameters: send_para,
-      retry_count:3,
-      retry_duration:20
-    };
+    try{
+
+      var send_data = {
+        taskurl: this.state.taskurl,
+        delay: this.state.delay,
+        userId: local_token["userId"],
+        taskName: this.state.taskName,
+        taskParameters: send_para,
+        retry_count: parseInt(this.state.retry_count),
+        retry_duration: parseInt(this.state.retry_duration),
+      };
+    }catch(e){
+      console.log("Form data error :: ",e);
+      this.setState({ taskurl: "", delay: "", taskName: "", submitted: false });
+      return;
+    }
+    
 
     fetch("http://localhost:3000/create_task", {
       method: "POST",
@@ -73,7 +84,8 @@ class CreateTask extends Component {
       })
       .catch((err) => console.log(err));
 
-    this.setState({ taskurl: "", delay: "", taskName: "", submitted: false });
+    this.setState({ taskurl: "", delay: "", 
+    taskName: "",retry_count:"",retry_duration:"" ,submitted: false });
     // console.log("This data is received : " + data["message"]);
   };
 
@@ -129,8 +141,8 @@ class CreateTask extends Component {
       }
 
     let render_time_input;
-    if (time_system == "") render_time_input = "";
-    else if (time_system == "seconds")
+    if (time_system === "") render_time_input = "";
+    else if (time_system === "seconds")
       render_time_input = (
         <label>
           Delay(Seconds):
@@ -144,7 +156,7 @@ class CreateTask extends Component {
           />
         </label>
       );
-    else if (time_system == "date_time")
+    else if (time_system === "date_time")
       render_time_input = (
         <label>
           Date:
@@ -167,7 +179,6 @@ class CreateTask extends Component {
         >
           <label>
             Task Name:
-            <div className="row"></div>
             <input
               type="text"
               className="u-full-width"
@@ -179,7 +190,6 @@ class CreateTask extends Component {
 
           <label>
             Task URL:
-            <div className="row"></div>
             <input
               type="text"
               className="u-full-width"
@@ -238,6 +248,28 @@ class CreateTask extends Component {
               Seconds
             </button>
           </div>
+
+          <label>
+            Retry Count:
+            <input
+              type="text"
+              className="u-full-width"
+              name="retry_count"
+              value={this.state.retry_count}
+              onChange={this.handleChange}
+            />
+          </label>
+
+          <label>
+            Retry Duration(Seconds):
+            <input
+              type="text"
+              className="u-full-width"
+              name="retry_duration"
+              value={this.state.retry_duration}
+              onChange={this.handleChange}
+            />
+          </label>
 
           <div className="">
             <button

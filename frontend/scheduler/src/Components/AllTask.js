@@ -66,23 +66,30 @@ class AllTask extends Component {
   // 7/4/21-(16:08:20)
 
   convertAllDate(t) {
-    t.map((task) => {
+    t.forEach((task) => {
       let ret_time = task["last_modified"];
       let convert_date = new Date(ret_time["$date"]);
 
-      let dateString = convert_date.getDate()+"/"+convert_date.getMonth()+"/"+convert_date.getFullYear() ;
+      let dateString =
+        convert_date.getDate() +
+        "/" +
+        convert_date.getMonth() +
+        "/" +
+        convert_date.getFullYear();
 
       let testDateString =
-      dateString + "-"+
-      "(" +
+        dateString +
+        "-" +
+        "(" +
         convert_date.getHours() +
         ":" +
         convert_date.getMinutes() +
         ":" +
-        convert_date.getSeconds() +")";
+        convert_date.getSeconds() +
+        ")";
 
       task["last_modified"] = testDateString;
-      return "";
+      return NaN;
     });
     return t;
   }
@@ -123,7 +130,7 @@ class AllTask extends Component {
             </select>
           </div>
         </div>
-        
+
         <Table borderless hover variant="" className="taskTable">
           <thead>
             <tr>
@@ -178,6 +185,9 @@ class AllTask extends Component {
                     />
                   );
               }
+
+                
+
             })}
           </tbody>
         </Table>

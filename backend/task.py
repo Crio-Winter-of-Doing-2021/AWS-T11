@@ -141,9 +141,6 @@ class Task:
         data = db.scheduler.find_one({"taskid":self.tid})
         return data['status']
 
-
-# Functions part
-# (url,delay=0,userId=0,params=None
 def CreateLamdaTask(req_data):
     try:
 
