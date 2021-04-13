@@ -5,45 +5,54 @@ import Logout from "../user/Logout";
 import { useState } from "react";
 
 function Nav(props) {
-  const navStyle = {
-    color: "rgb(71, 92, 99)",
-    textDecoration: "none",
-  };
 
-  let [currentTab, changeTab] = useState("/Dashborad");
-  
+  let [onHome, changeTabHome] = useState({ textDecoration: "underline" });
+  let [onAllTask, changeTabTask] = useState({ textDecoration: "none" });
+  let [onCreateTask, changeTabCreate] = useState({ textDecoration: "none" });
 
-  changeTab = (tab) => {
-    // console.log("Nav: ", tab);
+  let changeTab = (tab) => {
 
-    switch(tab){
-
-
+    switch (tab) {
       case "home":
-        console.log("In home")
+        changeTabHome((onHome = { textDecoration: "underline" }));
+        changeTabTask((onAllTask = { textDecoration: "none" }));
+        changeTabCreate((onCreateTask = { textDecoration: "none" }));
+        break;
+
+      case "createTask":
+        changeTabHome((onHome = { textDecoration: "none" }));
+        changeTabTask((onAllTask = { textDecoration: "none" }));
+        changeTabCreate((onCreateTask = { textDecoration: "underline" }));
+        break;
+
+      case "allTask":
+        changeTabHome((onHome = { textDecoration: "none" }));
+        changeTabTask((onAllTask = { textDecoration: "underline" }));
+        changeTabCreate((onCreateTask = { textDecoration: "none" }));
         break;
 
       default:
+        changeTabHome((onHome = { textDecoration: "none" }));
+        changeTabTask((onAllTask = { textDecoration: "none" }));
+        changeTabCreate((onCreateTask = { textDecoration: "none" }));
         break;
-
     }
-    
   };
 
   return (
     <nav id="CustomTaskNav">
-      <Link style={navStyle} to="/Dashboard" onClick={() => changeTab("home")}>
+      <Link style={onHome} to="/Dashboard" onClick={() => changeTab("home")}>
         <span>Task Scheduler</span>
       </Link>
       <Link
-        style={navStyle}
+        style={onCreateTask}
         to="/Dashboard/createtask"
         onClick={() => changeTab("createTask")}
       >
         <span>Create Task</span>
       </Link>
       <Link
-        style={navStyle}
+        style={onAllTask}
         to="/Dashboard/alltask"
         onClick={() => changeTab("allTask")}
       >

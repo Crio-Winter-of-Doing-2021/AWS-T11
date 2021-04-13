@@ -12,9 +12,16 @@ class TaskData extends Component {
       taskDelay: this.props.location.state.data.taskDelay,
       taskStatus: this.props.location.state.data.taskStatus,
       taskOwner: this.props.location.state.data.taskOwner,
-      taskResponse: this.props.location.state.data.taskResponse["body"],
+      taskResponse: JSON.stringify(this.props.location.state.data.taskResponse),
       taskLastModified: this.props.location.state.data.taskLastModified,
+      taskRetryCount: this.props.location.state.data.taskRetryCount,
+      taskRetryDuration: this.props.location.state.data.taskRetryDuration,
     };
+  }
+
+  componentDidMount(){
+    
+    console.log("test: ",this.props.location.state.data.taskResponse)
   }
 
   render() {
@@ -42,7 +49,14 @@ class TaskData extends Component {
             <span> Delay(Seconds): </span>
             {this.state.taskDelay}
           </h5>
-         
+          <h5>
+            <span>Retry Count: </span>
+            {this.state.taskRetryCount}
+          </h5>
+          <h5>
+            <span>Retry Duration: </span>
+            {this.state.taskRetryDuration}
+          </h5>
           {/* <button id="InfoButton">i</button> */}
         </div>
       </div>

@@ -27,7 +27,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-    console.log("In APP mount !" + this.props.location.state.userName);
     try {
       let local_storage = JSON.parse(localStorage.getItem("login"));
       if (local_storage["login"]) {

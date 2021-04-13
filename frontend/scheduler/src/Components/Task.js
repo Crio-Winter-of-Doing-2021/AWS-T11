@@ -22,6 +22,8 @@ function Task({ data, functionChange }) {
     taskOwner: data.user_id,
     taskResponse: data.ret_message,
     taskLastModified: data.last_modified,
+    taskRetryCount: data.retry_count,
+    taskRetryDuration: data.retry_duration
   };
 
   const local_storage = JSON.parse(localStorage.getItem("login"));

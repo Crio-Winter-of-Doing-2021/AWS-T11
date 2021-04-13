@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 import "../css/App.css";
-import auth from './auth';
+// import auth from './auth';
 
 class UserData extends Component {
   constructor(props) {
     super(props);
-    console.log("props : " + this.props.userName);
     this.state = {
       userName: "",
       userID: "",
@@ -18,14 +17,14 @@ class UserData extends Component {
     try {
       let local_storage = JSON.parse(localStorage.getItem("login"));
       if (local_storage["login"]) {
-        var _name = local_storage["userName"];
+        // var _name = local_storage["userName"];
         var _id = local_storage["userId"];
         // this.setState({ userName: _name, userId: _id });
 
         // console.log("TEST : ",auth.isAuthenticated());
 
         var send_data = { userId: _id };
-        console.log("this is send_data : ", send_data);
+        // console.log("this is send_data : ", send_data);
         var myHeader = new Headers();
         myHeader.append("Authorization", "Bearer " + local_storage["token"]);
         myHeader.append("Content-Type", "application/json");
@@ -73,7 +72,7 @@ class UserData extends Component {
       <div className="DetailsContainer">
         <div id="UserDetailsBlock">
           <h3>{this.state.userName}</h3>
-          <test>({this.state.userRole})</test>
+          <p>({this.state.userRole})</p>
           <h4>{this.state.userEmail}</h4>
         </div>
       </div>
